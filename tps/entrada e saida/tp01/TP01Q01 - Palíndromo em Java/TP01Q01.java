@@ -1,14 +1,14 @@
-// import java.util.Scanner;
+import java.util.Scanner;
 
 class TP01Q01 {
     public static void main(String[] args) {
-        // Scanner in = new Scanner(System.in);
-        String word = MyIO.readLine();
+        Scanner in = new Scanner(System.in);
+        String word = in.nextLine();
         do {
-            MyIO.println(isPalindromo(word) ? "SIM" : "NAO");
-            word = MyIO.readLine();
-        } while(!isFim(word));
-        // in.close();
+            System.out.println(isPalindromo(word) ? "SIM" : "NAO");
+            word = in.nextLine();
+        } while (!isFim(word));
+        in.close();
     }
 
     public static boolean isFim(String word) {
@@ -16,13 +16,10 @@ class TP01Q01 {
     }
 
     public static boolean isPalindromo(String word) {
-        if (word.length() % 2 == 0) {
-            for (int i = 0; i < word.length() / 2; i++) {
-                if (word.charAt(i) != word.charAt((word.length() - 1 - i)))
-                    return false;
-            }
-            return true;
+        for (int i = 0; i < word.length() / 2; i++) {
+            if (word.charAt(i) != word.charAt((word.length() - 1 - i)))
+                return false;
         }
-        return false;
+        return true;
     }
 }
