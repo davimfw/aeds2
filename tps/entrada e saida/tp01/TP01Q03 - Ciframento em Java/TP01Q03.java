@@ -1,16 +1,10 @@
-import java.util.Scanner;
-
 public class TP01Q03 {
     public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
-        String word = in.nextLine();
-        // String word = MyIO.readLine();
+        String word = MyIO.readLine();
         do {
             ciframento(word);
-            word = in.nextLine();
-            // word = MyIO.readLine();
-        } while(!isFim(word));
-        in.close();
+            word = MyIO.readLine();
+        } while (!isFim(word));
     }
 
     public static boolean isFim(String word) {
@@ -19,11 +13,10 @@ public class TP01Q03 {
 
     public static void ciframento(String word) {
         String cifra = "";
-        char letter;
-        for(int i = 0; i < word.length(); i++) {
-            letter =  (char) (word.charAt(i) + 3);
-            cifra += letter;
+        for (int i = 0; i < word.length(); i++) {
+            int letter = (word.charAt(i) + 3);
+            cifra += (char) letter;
         }
-        System.out.println(cifra);
+        MyIO.println(cifra);
     }
 }

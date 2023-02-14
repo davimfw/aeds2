@@ -19,6 +19,6 @@ int main() {
     do {
         printf(isPalindromo(word) ? "SIM\n" : "NAO\n");
         scanf("%[^\n]", word);
-    } while(!isFim(word));
+    } while(isFim(word));
     return 0;
 }
