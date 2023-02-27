@@ -16,23 +16,34 @@ public class TP01Q05 {
     }
 
     public static String test(String word) {
-        String newWord = "";
-
-        while (word.length() != 1) {
-            String result = "";
-            newWord = word.substring(word.lastIndexOf('(') - 1);
-            if (newWord.charAt(0) == 'D') {
-                result = and(newWord);
-            } else if (newWord.charAt(0) == 'R') {
-                result = or(newWord);
-            } else if (newWord.charAt(0) == 'T') {
-                result = not(newWord);
+        while (word.length() > 4) {
+            String expression;
+            try {
+                System.out.println("nao deu ruim try antes " + word);
+                expression = word.substring(word.lastIndexOf('(') - 3, word.lastIndexOf(')') - 1);
+                System.out.println("nao deu ruim try pos " + expression);
+            } catch(Error e) {
+                System.out.println("nao deu ruim catch " + word);
+                expression = word.substring(word.lastIndexOf('(') - 3);
             }
-            word = word.replace(newWord, result);
-            MyIO.println(word);
+            if(expression.length() < 1) expression = word;
+            System.out.println("nao deu ruim expression " + expression);
+            String result = "";
+            if (expression.charAt(2) == 'd') {
+                System.out.println("nao deu ruim expression " + expression);
+                result = and(expression);
+                word = word.replace(expression, result);
+            } else if (expression.charAt(2) == 'o') {
+                result = or(expression);
+                word = word.replace(expression, result);
+            } else if (expression.charAt(2) == 't') {
+                result = not(expression);
+                word = word.replace(expression, result);
+            }
+            System.out.println("nao deu ruim fora " + word);
         }
 
-        return newWord == "1" ? "SIM" : "NAO";
+        return word;
     }
 
     public static String and(String word) {
@@ -57,7 +68,7 @@ public class TP01Q05 {
                 newWord = newWord.replaceAll(charToReplace + "", newWord.charAt(i + 1) + "");
             }
         }
-        return newWord;
+        return newWord.substring(quant + 1);
     }
 
     public static boolean isFim(String word) {
