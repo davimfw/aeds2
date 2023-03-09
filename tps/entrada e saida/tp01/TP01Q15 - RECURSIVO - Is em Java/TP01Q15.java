@@ -20,7 +20,7 @@ public class TP01Q15 {
             if (!(word.charAt(i) == 'a' || word.charAt(i) == 'e' || word.charAt(i) == 'i' || word.charAt(i) == 'o'
                     || word.charAt(i) == 'u'))
                 return false;
-            return true && vogal(word, i++);
+            return true && vogal(word, ++i);
         }
 
         return true;
@@ -35,7 +35,7 @@ public class TP01Q15 {
             if (word.charAt(i) == 'a' || word.charAt(i) == 'e' || word.charAt(i) == 'i' || word.charAt(i) == 'o'
                     || word.charAt(i) == 'u')
                 return false;
-            return true && consoante(word, i++);
+            return true && consoante(word, ++i);
         }
         return true;
     }
@@ -44,7 +44,7 @@ public class TP01Q15 {
         if (i < word.length()) {
             if (!(word.charAt(i) < '0' && word.charAt(i) > '9'))
                 return false;
-            return true && isInteger(word, i++);
+            return true && isInteger(word, ++i);
         }
         return true;
     }
@@ -60,7 +60,7 @@ public class TP01Q15 {
             }
             if (comma > 1)
                 return false;
-            return true && isDouble(word, i++);
+            return true && isDouble(word, ++i);
         }
 
         return isInteger(word.replaceFirst("" + characterer, ""), 0);

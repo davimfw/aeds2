@@ -18,11 +18,11 @@ bool isFim(char *s) {
 }
 
 int main() {
-    char *word = "a";
-    scanf("%[^\n]", word);
+    char word[1000];
+    scanf(" %[^\n]s", word);
     do {
         printf(isPalindromo(word, 0) ? "SIM\n" : "NAO\n");
-        scanf("%[^\n]", word);
-    } while(isFim(word));
+        scanf(" %[^\n]s", word);
+    } while(!isFim(word));
     return 0;
 }
