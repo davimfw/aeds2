@@ -15,10 +15,12 @@ public class TP02Q09 {
             word = MyIO.readLine();
         } while (!isFim(word));
 
+        personagens.sort();
+
         /**
          * @TODO: imprimir
          */
-        for(int i = 0; i < personagens.n; i++) {
+        for (int i = 0; i < personagens.n; i++) {
             personagens.array[i].imprimir();
         }
     }
@@ -71,17 +73,36 @@ class Lista {
         n = 0;
     }
 
+    public void sort() {
+        for (int i = 0; i < (n - 1); i++) {
+            int menor = i;
+            for (int j = (i + 1); j < n; j++) {
+                if (array[j].getNome().compareToIgnoreCase(array[menor].getNome()) == -1) {
+                    menor = j;
+                }
+            }
+            swap(menor, i);
+        }
+    }
+
+    public void swap(int i, int j) {
+        Personagem temp = array[i].clone();
+        array[i] = array[j].clone();
+        array[j] = temp.clone();
+    }
+
     public void inserirOrdenado(Personagem personagem) {
         boolean inserido = false;
         for (int i = n; i > 0; i--) {
-            if (personagem.getNome().charAt(0) > array[i-1].getNome().charAt(0)) {
-                if(personagem.getNome().charAt(0) > array[i-1].getNome().charAt(0))
-                inserir(personagem, i);
+            if (personagem.getNome().charAt(0) > array[i - 1].getNome().charAt(0)) {
+                if (personagem.getNome().charAt(0) > array[i - 1].getNome().charAt(0))
+                    inserir(personagem, i);
                 i = 0;
                 inserido = true;
             }
         }
-        if(!inserido) inserirFim(personagem);
+        if (!inserido)
+            inserirFim(personagem);
     }
 
     public void inserirInicio(Personagem personagem) {

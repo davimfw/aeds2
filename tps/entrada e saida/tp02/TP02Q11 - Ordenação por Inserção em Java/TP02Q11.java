@@ -15,10 +15,12 @@ public class TP02Q11 {
             word = MyIO.readLine();
         } while (!isFim(word));
 
+        personagens.sort();
+
         /**
          * @TODO: imprimir
          */
-        for(int i = 0; i < personagens.n; i++) {
+        for (int i = 0; i < personagens.n; i++) {
             personagens.array[i].imprimir();
         }
     }
@@ -71,16 +73,16 @@ class Lista {
         n = 0;
     }
 
-    public void inserirOrdenado(Personagem personagem) {
-        boolean inserido = false;
-        for (int i = n; i > 0; i--) {
-            if (personagem.getAnoNascimento() > array[i-1].getAnoNascimento()) {
-                inserir(personagem, i);
-                i = 0;
-                inserido = true;
+    public void sort() {
+        for (int i = 1; i < n; i++) {
+            Personagem tmp = array[i].clone();
+            int j = i - 1;
+            while ((j >= 0) && (array[j].getAnoNascimento().compareToIgnoreCase(tmp.getAnoNascimento()) == -1 || array[j].getAnoNascimento().equals("unknown"))) {
+                array[j + 1] = array[j];
+                j--;
             }
+            array[j + 1] = tmp.clone();
         }
-        if(!inserido) inserirFim(personagem);
     }
 
     public void inserirInicio(Personagem personagem) {
