@@ -77,8 +77,21 @@ class Lista {
         for (int i = 1; i < n; i++) {
             Personagem tmp = array[i].clone();
             int j = i - 1;
-            while ((j >= 0) && (array[j].getAnoNascimento().compareToIgnoreCase(tmp.getAnoNascimento()) == -1 || array[j].getAnoNascimento().equals("unknown"))) {
-                array[j + 1] = array[j];
+            while ((j >= 0)
+                    && ((!array[j].getAnoNascimento().equals("unknown") && !tmp.getAnoNascimento().equals("unknown")
+                            && Double.parseDouble(array[j].getAnoNascimento().substring(0, 2)) > Double
+                                    .parseDouble(tmp.getAnoNascimento().substring(0, 2)))
+                            ||
+                            (!array[j].getAnoNascimento().equals("unknown") && !tmp.getAnoNascimento().equals("unknown")
+                                    && Double.parseDouble(array[j].getAnoNascimento().substring(0, 2)) == Double
+                                            .parseDouble(tmp.getAnoNascimento().substring(0, 2))
+                                    && tmp.getNome().compareTo(array[j].getNome()) < 0)
+                            ||
+                            (array[j].getAnoNascimento().equals("unknown") && tmp.getAnoNascimento().equals("unknown")
+                                    && tmp.getNome().compareTo(array[j].getNome()) < 0)
+                            || array[j].getAnoNascimento().equals("unknown")
+                                    && !tmp.getAnoNascimento().equals("unknown"))) {
+                array[j + 1] = array[j].clone();
                 j--;
             }
             array[j + 1] = tmp.clone();
