@@ -1,0 +1,1 @@
+1321401 	 número de comparações 562 	 Tempo de execução 69 milisegundos

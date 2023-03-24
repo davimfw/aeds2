@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public class TP02Q07 {
     public static void main(String[] args) {
+        long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
@@ -26,10 +27,15 @@ public class TP02Q07 {
                     encontrado = "SIM";
                     i = personagens.n;
                 }
+                Lista.numComparacao++;
             }
             System.out.println(encontrado);
             busca = MyIO.readLine();
         } while(!isFim(busca));
+        long fim = System.currentTimeMillis();
+        long tempo = fim - inicio;
+        String conteudo = "matricula 1321401 \t número de comparações " + Lista.numComparacao + " \t Tempo de execução " + tempo + " milisegundos";
+        Arq.openWriteClose("matricula_sequencial.txt", "UTF-8", conteudo);
 
     }
 
@@ -38,7 +44,7 @@ public class TP02Q07 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word);
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -71,6 +77,7 @@ public class TP02Q07 {
 class Lista {
     int n;
     Personagem[] array;
+    public static int numComparacao = 0;
 
     Lista() {
         this(100);

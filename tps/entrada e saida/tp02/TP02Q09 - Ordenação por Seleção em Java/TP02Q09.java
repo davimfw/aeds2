@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public class TP02Q09 {
     public static void main(String[] args) {
+        long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
@@ -23,6 +24,12 @@ public class TP02Q09 {
         for (int i = 0; i < personagens.n; i++) {
             personagens.array[i].imprimir();
         }
+        long fim = System.currentTimeMillis();
+        long tempo = fim - inicio;
+        String conteudo = "matricula 1321401 \t número de comparações " + Lista.numComparacao
+                + "\t número de movimetações " + Lista.numMovimentacao + "\t Tempo de execução " + tempo
+                + " milisegundos";
+        Arq.openWriteClose("matricula_selecao.txt", "UTF-8", conteudo);
     }
 
     public static String getFileData(String word) {
@@ -30,7 +37,7 @@ public class TP02Q09 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word);
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -63,6 +70,8 @@ public class TP02Q09 {
 class Lista {
     int n;
     Personagem[] array;
+    static int numComparacao = 0;
+    static int numMovimentacao = 0;
 
     Lista() {
         this(100);
@@ -80,6 +89,7 @@ class Lista {
                 if (array[j].getNome().compareToIgnoreCase(array[menor].getNome()) == -1) {
                     menor = j;
                 }
+                numComparacao++;
             }
             swap(menor, i);
         }
@@ -89,6 +99,7 @@ class Lista {
         Personagem temp = array[i].clone();
         array[i] = array[j].clone();
         array[j] = temp.clone();
+        numMovimentacao += 2;
     }
 
     public void inserirOrdenado(Personagem personagem) {

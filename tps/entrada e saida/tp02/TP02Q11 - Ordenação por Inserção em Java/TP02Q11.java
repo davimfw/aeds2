@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public class TP02Q11 {
     public static void main(String[] args) {
+        long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
@@ -23,6 +24,12 @@ public class TP02Q11 {
         for (int i = 0; i < personagens.n; i++) {
             personagens.array[i].imprimir();
         }
+        long fim = System.currentTimeMillis();
+        long tempo = fim - inicio;
+        String conteudo = "matricula 1321401 \t número de comparações " + Lista.numComparacao
+                + "\t número de movimetações " + Lista.numMovimentacao + "\t Tempo de execução " + tempo
+                + " milisegundos";
+        Arq.openWriteClose("matricula_insercao.txt", "UTF-8", conteudo);
     }
 
     public static String getFileData(String word) {
@@ -30,7 +37,7 @@ public class TP02Q11 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word);
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -63,6 +70,8 @@ public class TP02Q11 {
 class Lista {
     int n;
     Personagem[] array;
+    static int numComparacao = 0;
+    static int numMovimentacao = 0;
 
     Lista() {
         this(100);
@@ -93,8 +102,11 @@ class Lista {
                                     && !tmp.getAnoNascimento().equals("unknown"))) {
                 array[j + 1] = array[j].clone();
                 j--;
+                numMovimentacao++;
             }
+            numComparacao++;
             array[j + 1] = tmp.clone();
+            numMovimentacao++;
         }
     }
 
@@ -264,7 +276,7 @@ class Personagem {
 
     public void imprimir() {
         DecimalFormat decimalFormat = new DecimalFormat("#.################");
-        MyIO.println("## " + this.nome + " ## " + this.altura + " ## " + decimalFormat.format(this.peso) + " ## "
+        MyIO.println(" ## " + this.nome + " ## " + this.altura + " ## " + decimalFormat.format(this.peso) + " ## "
                 + this.corDoCabelo + " ## "
                 + this.codDaPele + " ## " + this.corDosOlhos + " ## " + this.anoNascimento + " ## " + this.genero
                 + " ## " + this.homeWorld + " ## ");
