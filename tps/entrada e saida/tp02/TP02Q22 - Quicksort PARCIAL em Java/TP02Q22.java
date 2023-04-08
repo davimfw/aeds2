@@ -30,7 +30,7 @@ public class TP02Q22 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word.substring(0));
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -79,7 +79,7 @@ class Lista {
     }
 
     public String getCabelo(Personagem p) {
-        return p.getCorDoCabelo().equals("n/a") ? "zzzzzzzzz" : p.getCorDoCabelo();
+        return p.getCorDoCabelo().equals("none") ? "zzzzzzzzz" : p.getCorDoCabelo();
     }
 
     private void quicksort(int esq, int dir) {
@@ -87,10 +87,22 @@ class Lista {
         Personagem pivo = new Personagem();
         pivo = array[(dir + esq) / 2].clone();
         while (i <= j) {
-            while (getCabelo(array[i]).compareTo(getCabelo(pivo)) == -1)
+            while (array[i].getCorDoCabelo().charAt(0) < pivo.getCorDoCabelo().charAt(0)
+                    || (array[i].getCorDoCabelo().charAt(0) == pivo.getCorDoCabelo().charAt(0)
+                            && array[i].getCorDoCabelo().charAt(1) < pivo.getCorDoCabelo().charAt(1))
+                    || (array[i].getCorDoCabelo().charAt(0) == pivo.getCorDoCabelo().charAt(0)
+                            && array[i].getCorDoCabelo().charAt(1) == pivo.getCorDoCabelo().charAt(1)
+                            && array[i].getNome().charAt(0) < pivo.getNome().charAt(0))) {
                 i++;
-            while (getCabelo(array[j]).compareTo(getCabelo(pivo)) == 1)
+            }
+            while (array[j].getCorDoCabelo().charAt(0) > pivo.getCorDoCabelo().charAt(0)
+                    || (array[j].getCorDoCabelo().charAt(0) == pivo.getCorDoCabelo().charAt(0)
+                            && array[j].getCorDoCabelo().charAt(1) > pivo.getCorDoCabelo().charAt(1))
+                    || (array[j].getCorDoCabelo().charAt(0) == pivo.getCorDoCabelo().charAt(0)
+                            && array[j].getCorDoCabelo().charAt(1) == pivo.getCorDoCabelo().charAt(1)
+                            && array[j].getNome().charAt(0) > pivo.getNome().charAt(0))) {
                 j--;
+            }
             if (i <= j) {
                 swap(i, j);
                 i++;
