@@ -1,32 +1,24 @@
 class TP03Q05 {
     public static void main(String[] args) {
-        Matriz m1, m2, soma, m3, m4, multiplicao;
-
-        m1 = new Matriz(MyIO.readInt("Digite o numero de linhas (M1): "),
-                MyIO.readInt("Digite o numero de colunas (M1): "));
-        m2 = new Matriz(MyIO.readInt("Digite o numero de linhas (M2): "),
-                MyIO.readInt("Digite o numero de colunas (M2): "));
-        m3 = new Matriz(MyIO.readInt("Digite o numero de linhas (M3): "),
-                MyIO.readInt("Digite o numero de colunas (M3): "));
-        m4 = new Matriz(MyIO.readInt("Digite o numero de linhas (M4): "),
-                MyIO.readInt("Digite o numero de colunas (M4): "));
-
-        m1.ler();
-        m2.ler();
-        m3.ler();
-        m4.ler();
-
-        // Somar as duas matrizes e salvar o resultado na matriz soma
-        soma = m1.soma(m2); // verifique se eh possivel somar
-
-        // Imprimir a matriz 1
-        soma.print();
-
-        // Multiplicar duas matrizes e salvar o resultado na matriz multiplicacao
-        multiplicacao = m3.multiplicacao(m4); // verifique se eh possivel multiplicar
-
-        // Imprimir a matriz 1
-        multiplicacao.print();
+        Matriz m1, m2, soma, multiplicacao;
+        int tests;
+        tests = Integer.parseInt(MyIO.readLine());
+        for (int i = 0; i < tests; i++) {
+            int linha = Integer.parseInt(MyIO.readLine());
+            int coluna = Integer.parseInt(MyIO.readLine());
+            m1 = new Matriz(linha, coluna);
+            m1.read();
+            m1.mostrarDiagonalPrincipal();
+            m1.mostrarDiagonalSecundaria();
+            linha = Integer.parseInt(MyIO.readLine());
+            coluna = Integer.parseInt(MyIO.readLine());
+            m2 = new Matriz(linha, coluna);
+            m2.read();
+            soma = m1.soma(m2);
+            soma.print();
+            multiplicacao = m1.multiplicacao(m2);
+            multiplicacao.print();
+        }
 
     }
 }
@@ -57,74 +49,143 @@ class Matriz {
     private int linha, coluna;
 
     public Matriz() {
-        Matriz(3, 3);
+        this(3, 3);
     }
 
     public Matriz(int linha, int coluna) {
         this.linha = linha;
         this.coluna = coluna;
-
+        this.inicio = new Celula();
         // alocar a matriz com this.linha linhas e this.coluna colunas
+        this.iniciarMatriz();
     }
 
     public void iniciarMatriz() {
-        Celula tmp = inicio;
-        for (int i = 0; i < coluna; i++, tmp = tmp.dir) {
+        Celula tmp = this.inicio;
+        for (int i = 0; i < this.coluna; i++, tmp = tmp.dir) {
             tmp.dir = new Celula(0, null, null, tmp, null);
         }
-        tmp = inicio;
-        for (int i = 0; i < linha; i++, tmp = tmp.inf) {
+        tmp = this.inicio;
+        for (int i = 0; i < this.linha; i++, tmp = tmp.inf) {
             tmp.inf = new Celula(0, null, tmp, null, null);
         }
 
         iniciarMatrizMeio();
     }
 
-    private iniciarMatrizMeio() {
-        for(Celula tmp=inicio.dir; tmp.dir != null; tmp = tmp.dir) {
-            tmp.inf = new Celula(0, null, tmp, tmp.esq.inf, null);
+    private void iniciarMatrizMeio() {
+        Celula atual = inicio.inf;
+        for (int i = 1; i < linha; i++, atual = atual.inf) {
+            Celula temp = atual;
+            for (int j = 1; j < coluna; j++, temp = temp.dir) {
+                temp.dir = new Celula(0, null, temp.sup.dir, temp, null);
+                temp.sup.dir.inf = temp.dir;
+            }
         }
     }
 
-    public Matriz soma (Matriz m) {
-       Matriz resp = null;
- 
-       if(this.linha == m.linha && this.coluna == m.coluna){
-          resp = new Matriz(this.linha, this.coluna);
-          for(){
-             for(){
-                //sendo c (pont em resp), a (em this) e b (em m)
-                c.elemento = a.elemento + b.elemento;
-             }
-          }
-          //...
-       }
- 
-       return resp;
+    private Celula getPos(int linha, int coluna) {
+        Celula atual = inicio;
+        for (int i = 0; i < linha; i++) {
+            atual = atual.inf;
+        }
+        for (int j = 0; j < coluna; j++) {
+            atual = atual.dir;
+        }
+        return atual;
     }
 
-    public Matriz multiplicacao (Matriz m) {
-       Matriz resp = null;
- 
-       if(){
-          //...
-       }
- 
-       return resp;
+    public Matriz soma(Matriz m) {
+        Matriz resp = null;
+
+        if (this.linha == m.linha && this.coluna == m.coluna) {
+            resp = new Matriz(this.linha, this.coluna);
+            for (int i = 0; i < this.linha; i++) {
+                for (int j = 0; j < this.coluna; j++) {
+                    Celula a = getPos(i, j);
+                    Celula b = m.getPos(i, j);
+                    Celula c = resp.getPos(i, j);
+                    c.elemento = a.elemento + b.elemento;
+                }
+            }
+        }
+
+        return resp;
     }
 
-    public boolean isQuadrada(){
-       boolean (this.linha == this.coluna);
+    public Matriz multiplicacao(Matriz m) {
+        Matriz resp = null;
+
+        if (this.coluna == m.linha) {
+            resp = new Matriz(this.linha, m.coluna);
+            for (int i = 0; i < resp.linha; i++) {
+                for (int j = 0; j < resp.coluna; j++) {
+                    int total = 0;
+                    for (int k = 0; k < this.coluna; k++) {
+                        Celula a = this.getPos(i, k);
+                        Celula b = m.getPos(k, j);
+                        total += a.elemento * b.elemento;
+                    }
+                    resp.inserir(i, j, total);
+                }
+            }
+        }
+
+        return resp;
+    }
+
+    public void inserir(int linha, int coluna, int valor) {
+        Celula atual = inicio;
+        for (int i = 0; i < linha; i++) {
+            atual = atual.inf;
+        }
+        for (int j = 0; j < coluna; j++) {
+            atual = atual.dir;
+        }
+        atual.elemento = valor;
+    }
+
+    public boolean isQuadrada() {
+        return (this.linha == this.coluna);
     }
 
     public void mostrarDiagonalPrincipal() {
         if (isQuadrada() == true) {
-
+            for (int i = 0; i < this.linha; i++) {
+                System.out.print(getPos(i, i).elemento + " ");
+            }
+            System.out.println();
         }
     }
 
     public void mostrarDiagonalSecundaria() {
         if (isQuadrada() == true) {
+            for (int i = 0; i < linha; i++) {
+                for (int j = 0; j < coluna; j++) {
+                    if (i + j == linha - 1) {
+                        System.out.print(getPos(i, j).elemento + " ");
+                    }
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public void read() {
+        for (int i = 0; i < this.linha; i++) {
+            for (int j = 0; j < this.coluna; j++) {
+                int elemento = MyIO.readInt();
+                inserir(i, j, elemento);
+            }
+        }
+    }
+
+    public void print() {
+        for (int i = 0; i < this.linha; i++) {
+            for (int j = 0; j < this.coluna; j++) {
+                System.out.print(getPos(i, j).elemento + " ");
+            }
+            System.out.println();
         }
     }
 }
