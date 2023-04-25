@@ -91,39 +91,46 @@ class Lista {
     }
 
     public void sort() {
-        quicksort(primeiro.prox, ultimo);
+        quicksort(primeiro.prox, ultimo, 0, tamanho());
     }
 
     public boolean comparePersonagem(Personagem p1,Personagem p2) {
-        if(!p1.getCorDoCabelo().equals("none") && !p2.getCorDoCabelo().equals("none")) {
+        if(!p1.getCorDoCabelo().startsWith("n") && !p2.getCorDoCabelo().startsWith("n")) {
             return p1.getCorDoCabelo().compareToIgnoreCase(p2.getCorDoCabelo()) < 0;
-        } else if(p1.getCorDoCabelo().equals("none") && p2.getCorDoCabelo().equals("none")) {
+        } else if(p1.getCorDoCabelo().startsWith("n") && p2.getCorDoCabelo().startsWith("n")) {
             return p1.getNome().compareToIgnoreCase(p2.getNome()) < 0;
-        } else if(p1.getCorDoCabelo().equals("none") && !p2.getCorDoCabelo().equals("none")) {
-            return false;
-        } else {
+        } else if(p1.getCorDoCabelo().startsWith("n") && !p2.getCorDoCabelo().startsWith("n")) {
             return true;
+        } else {
+            return false;
         }
     }
 
-    public void quicksort(Celula esq, Celula dir) {
+    public void quicksort(Celula esq, Celula dir, int e, int d) {
+        int esqd = e, dirt = d;
         Celula i = esq, j = dir;
-        String pivo = esq.elemento.getCorDoCabelo();
-        while (i != j && i != null && j != null) {
-            while (i != j && i.prox != null && i.elemento.getCorDoCabelo().compareTo(pivo) < 0)
+        Personagem pivo = esq.elemento;
+        while (esqd < dirt) {
+            while (comparePersonagem(i.elemento, pivo)) {
+                esqd++;
                 i = i.prox;
-            while (j.ant != null && j != i && j.elemento.getCorDoCabelo().compareTo(pivo) > 0)
+            }
+            while (comparePersonagem(pivo, j.elemento)) {
+                dirt--;
                 j = j.ant;
-            if (i != j && i.elemento != null && j.elemento != null) {
+            }
+            if (esqd <= dirt) {
                 swap(i, j);
+                esqd++;
                 i = i.prox;
+                dirt--;
                 j = j.ant;
             }
         }
-        if (esq != j)
-            quicksort(esq, j);
-        if (i != dir)
-            quicksort(i, dir);
+        if (e < dirt)
+            quicksort(i, dir, e, dirt);
+        if (esqd < d)
+            quicksort(esq, j, esqd, d);
     }
 
     public void swap(Celula i, Celula j) {
@@ -434,7 +441,7 @@ class Personagem {
 
     public void imprimir() {
         DecimalFormat decimalFormat = new DecimalFormat("#.################");
-        MyIO.println("## " + this.nome + " ## " + this.altura + " ## " + decimalFormat.format(this.peso) + " ## "
+        MyIO.println(" ## " + this.nome + " ## " + this.altura + " ## " + decimalFormat.format(this.peso) + " ## "
                 + this.corDoCabelo + " ## "
                 + this.codDaPele + " ## " + this.corDosOlhos + " ## " + this.anoNascimento + " ## " + this.genero
                 + " ## " + this.homeWorld + " ## ");
