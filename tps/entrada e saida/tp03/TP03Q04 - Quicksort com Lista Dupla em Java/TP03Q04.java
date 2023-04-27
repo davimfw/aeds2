@@ -95,17 +95,13 @@ class Lista {
     }
 
     public boolean comparePersonagem(Personagem p1, Personagem p2) {
-        boolean mesmaCorDoCabelo = p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0);
-        boolean mesmaTonalidade = p1.getCorDoCabelo().charAt(1) == p2.getCorDoCabelo().charAt(1);
+        int compareCor = p1.getCorDoCabelo().compareTo(p2.getCorDoCabelo());
         boolean nomeMenor = p1.getNome().compareTo(p2.getNome()) < 0;
     
-        if (mesmaCorDoCabelo) {
-            if (mesmaTonalidade) {
-                return nomeMenor;
-            }
-            return p1.getCorDoCabelo().charAt(1) < p2.getCorDoCabelo().charAt(1);
+        if (compareCor == 0) {
+            return nomeMenor;
         }
-        return p1.getCorDoCabelo().charAt(0) < p2.getCorDoCabelo().charAt(0);
+        return compareCor < 0;
     }
 
     public void quicksort(Celula esq, Celula dir, int e, int d) {

@@ -371,22 +371,6 @@ void inserir(const SWCharacter *const x)
     ultimo = ultimo->prox;
 }
 
-// bool pesquisar(SWCharacter x)
-// {
-//     bool resp = false;
-//     Celula *i;
-
-//     for (i = primeiro->prox; i != NULL; i = i->prox)
-//     {
-//         if (i->elemento == x)
-//         {
-//             resp = true;
-//             i = ultimo;
-//         }
-//     }
-//     return resp;
-// }
-
 void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
 {
     Celula* in = *inicio;
@@ -395,8 +379,7 @@ void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
     SWCharacter *pivo = (*inicio)->elemento;
     while (i <= j)
     {
-        while (strcmp(in->elemento->hair_color, pivo->hair_color) < 0 ||
-               (strcmp(in->elemento->hair_color, pivo->hair_color) == 0 && strcmp(in->elemento->name, pivo->name) < 0))
+        while (strcmp(in->elemento->hair_color, pivo->hair_color) > 0)
         {
             in = in->prox;
             i++;
@@ -446,10 +429,11 @@ int main()
     quicksort(&primeiro->prox, &ultimo, tamanho());
 
     Celula *tmp;
-    for (tmp = primeiro->prox; tmp->prox != NULL; tmp = tmp->prox)
+    for (tmp = primeiro->prox; tmp != NULL; tmp = tmp->prox)
     {
         swc_print(tmp->elemento);
     }
+    // @TODO print file
     // swc_free(array, len);
     // free(str);
     return 0;
