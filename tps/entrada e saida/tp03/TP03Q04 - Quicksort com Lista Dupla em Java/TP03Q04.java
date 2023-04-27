@@ -5,13 +5,13 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 
 public class TP03Q04 {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
         Lista personagens = new Lista();
         do {
-            personagens.inserirInicio(new Personagem(getFileData(word)));
+            personagens.inserirFim(new Personagem(getFileData(word)));
             word = MyIO.readLine();
         } while (!isFim(word));
 
@@ -94,37 +94,49 @@ class Lista {
         quicksort(primeiro.prox, ultimo, 0, tamanho());
     }
 
-    public boolean comparePersonagem(Personagem p1,Personagem p2) {
-        if(!p1.getCorDoCabelo().startsWith("n") && !p2.getCorDoCabelo().startsWith("n")) {
-            return p1.getCorDoCabelo().compareToIgnoreCase(p2.getCorDoCabelo()) < 0;
-        } else if(p1.getCorDoCabelo().startsWith("n") && p2.getCorDoCabelo().startsWith("n")) {
-            return p1.getNome().compareToIgnoreCase(p2.getNome()) < 0;
-        } else if(p1.getCorDoCabelo().startsWith("n") && !p2.getCorDoCabelo().startsWith("n")) {
-            return true;
-        } else {
-            return false;
+    public boolean comparePersonagem(Personagem p1, Personagem p2) {
+        boolean mesmaCorDoCabelo = p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0);
+        boolean mesmaTonalidade = p1.getCorDoCabelo().charAt(1) == p2.getCorDoCabelo().charAt(1);
+        boolean nomeMenor = p1.getNome().compareTo(p2.getNome()) < 0;
+    
+        if (mesmaCorDoCabelo) {
+            if (mesmaTonalidade) {
+                return nomeMenor;
+            }
+            return p1.getCorDoCabelo().charAt(1) < p2.getCorDoCabelo().charAt(1);
         }
+        return p1.getCorDoCabelo().charAt(0) < p2.getCorDoCabelo().charAt(0);
     }
 
     public void quicksort(Celula esq, Celula dir, int e, int d) {
         int esqd = e, dirt = d;
         Celula i = esq, j = dir;
-        Personagem pivo = esq.elemento;
+        Personagem pivo = esq.elemento.clone();
         while (esqd < dirt) {
-            while (comparePersonagem(i.elemento, pivo)) {
+            while (esqd < dirt && i.elemento != null && comparePersonagem(i.elemento, pivo) && i.prox != null) {
                 esqd++;
                 i = i.prox;
+                if (i.elemento == null) {
+                    i.elemento = pesquisar(esqd);
+                }
             }
-            while (comparePersonagem(pivo, j.elemento)) {
+            while (esqd < dirt && j.elemento != null && comparePersonagem(pivo, j.elemento) && j.ant != null) {
                 dirt--;
                 j = j.ant;
+                if (j.elemento == null) {
+                    j.elemento = pesquisar(dirt);
+                }
             }
-            if (esqd <= dirt) {
+            if (esqd <= dirt && i.elemento != null && j.elemento != null) {
                 swap(i, j);
                 esqd++;
-                i = i.prox;
+                if (i.prox != null && i.prox.elemento != null) {
+                    i = i.prox;
+                }
                 dirt--;
-                j = j.ant;
+                if (j.ant != null && j.ant.elemento != null) {
+                    j = j.ant;
+                }
             }
         }
         if (e < dirt)
@@ -136,7 +148,7 @@ class Lista {
     public void swap(Celula i, Celula j) {
         Personagem tmp = i.elemento.clone();
         i.elemento = j.elemento.clone();
-        j.elemento = tmp;
+        j.elemento = tmp.clone();
     }
 
     /**
@@ -311,6 +323,13 @@ class Lista {
             }
         }
         return resp;
+    }
+
+    public Personagem pesquisar(int pos) {
+        Celula tmp = this.primeiro;
+        for (int i = 0; i < pos; i++, tmp = tmp.prox)
+            ;
+        return tmp.elemento;
     }
 
     /**
