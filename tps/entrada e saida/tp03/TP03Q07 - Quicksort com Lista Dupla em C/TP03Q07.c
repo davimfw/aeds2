@@ -338,6 +338,8 @@ void start()
 {
     primeiro = novaCelula(NULL);
     ultimo = primeiro;
+    primeiro->prox = ultimo;
+    ultimo->ant = primeiro;
 }
 
 /**
@@ -376,10 +378,11 @@ void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
     Celula* in = *inicio;
     Celula* fi = *fim;
     int i = esq, j = dir;
-    SWCharacter *pivo = (*inicio)->elemento;
+    SWCharacter *pivo = (*fim)->elemento;
     while (i <= j)
     {
-        while (strcmp(in->elemento->hair_color, pivo->hair_color) > 0)
+        while (strcmp(in->elemento->hair_color, pivo->hair_color) < 0 ||
+               (strcmp(in->elemento->hair_color, pivo->hair_color) == 0 && strcmp(in->elemento->name, pivo->name) < 0))
         {
             in = in->prox;
             i++;
