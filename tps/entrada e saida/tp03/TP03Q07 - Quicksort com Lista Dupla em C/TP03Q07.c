@@ -338,8 +338,6 @@ void start()
 {
     primeiro = novaCelula(NULL);
     ultimo = primeiro;
-    primeiro->prox = ultimo;
-    ultimo->ant = primeiro;
 }
 
 /**
@@ -373,29 +371,51 @@ void inserir(const SWCharacter *const x)
     ultimo = ultimo->prox;
 }
 
+bool compareMenor(SWCharacter *p1, SWCharacter *p2)
+{
+    if (p1->hair_color[0] < p2->hair_color[0] ||
+        (p1->hair_color[0] == p2->hair_color[0] && p1->hair_color[1] < p2->hair_color[1]) ||
+        (p1->hair_color[0] == p2->hair_color[0] && p1->hair_color[1] == p2->hair_color[1] && p1->hair_color[2] < p2->hair_color[2]) ||
+        (p1->hair_color[0] == p2->hair_color[0] && p1->hair_color[1] == p2->hair_color[1] && p1->name[0] < p2->name[0]))
+    {
+        return true;
+    }
+    return false;
+}
+
+bool compareMaior(SWCharacter *p1, SWCharacter *p2)
+{
+    if (p1->hair_color[0] > p2->hair_color[0] ||
+        (p1->hair_color[0] == p2->hair_color[0] && p1->hair_color[1] > p2->hair_color[1]) ||
+        (p1->hair_color[0] == p2->hair_color[0] && p1->hair_color[1] == p2->hair_color[1] && p1->hair_color[2] > p2->hair_color[2]) ||
+        (p1->hair_color[0] == p2->hair_color[0] && p1->hair_color[1] == p2->hair_color[1] && p1->name[0] > p2->name[0]))
+    {
+        return true;
+    }
+    return false;
+}
+
 void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
 {
-    Celula* in = *inicio;
-    Celula* fi = *fim;
+    Celula *in = *inicio;
+    Celula *fi = *fim;
     int i = esq, j = dir;
     SWCharacter *pivo = (*fim)->elemento;
     while (i <= j)
     {
-        while (strcmp(in->elemento->hair_color, pivo->hair_color) < 0 ||
-               (strcmp(in->elemento->hair_color, pivo->hair_color) == 0 && strcmp(in->elemento->name, pivo->name) < 0))
+        while (compareMenor(in->elemento, pivo))
         {
             in = in->prox;
             i++;
         }
-        while (strcmp(fi->elemento->hair_color, pivo->hair_color) > 0 ||
-               (strcmp(fi->elemento->hair_color, pivo->hair_color) == 0 && strcmp(fi->elemento->name, pivo->name) > 0))
+        while (compareMaior(fi->elemento, pivo))
         {
             fi = fi->ant;
             j--;
         }
         if (i <= j)
         {
-            SWCharacter* tmp = swc_clone(in->elemento);
+            SWCharacter *tmp = swc_clone(in->elemento);
             in->elemento = swc_clone(fi->elemento);
             fi->elemento = tmp;
             in = in->prox;
@@ -412,7 +432,7 @@ void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
 
 void quicksort(Celula **inicio, Celula **fim, int n)
 {
-    quicksortRec(inicio, fim, 0, n);
+    quicksortRec(inicio, fim, 0, n - 1);
 }
 
 // ==================================== Main ================================== //
@@ -429,9 +449,8 @@ int main()
         scanf(" %100[^\n]", str);
     }
 
-    quicksort(&primeiro->prox, &ultimo, tamanho());
-
     Celula *tmp;
+    quicksort(&primeiro->prox, &ultimo, tamanho());
     for (tmp = primeiro->prox; tmp != NULL; tmp = tmp->prox)
     {
         swc_print(tmp->elemento);

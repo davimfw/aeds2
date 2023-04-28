@@ -91,7 +91,7 @@ class Lista {
     }
 
     public void sort() {
-        quicksort(primeiro.prox, ultimo, 0, tamanho());
+        quicksort(primeiro.prox, ultimo, 0, tamanho() - 1);
     }
 
     public boolean comparePersonagem(Personagem p1, Personagem p2) {
@@ -109,14 +109,14 @@ class Lista {
         Celula i = esq, j = dir;
         Personagem pivo = esq.elemento.clone();
         while (esqd < dirt) {
-            while (esqd < dirt && i.elemento != null && comparePersonagem(i.elemento, pivo) && i.prox != null) {
+            while (comparePersonagem(i.elemento, pivo)) {
                 esqd++;
                 i = i.prox;
                 if (i.elemento == null) {
                     i.elemento = pesquisar(esqd);
                 }
             }
-            while (esqd < dirt && j.elemento != null && comparePersonagem(pivo, j.elemento) && j.ant != null) {
+            while (comparePersonagem(pivo, j.elemento)) {
                 dirt--;
                 j = j.ant;
                 if (j.elemento == null) {
