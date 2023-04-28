@@ -1,0 +1,1 @@
+matricula 1321401 	 número de comparações 430	 número de movimetações 61	 Tempo de execução 85 milisegundos

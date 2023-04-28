@@ -6,6 +6,7 @@ import java.util.Locale;
 
 public class TP03Q04 {
     public static void main(String[] args) throws Exception {
+        long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
@@ -17,6 +18,12 @@ public class TP03Q04 {
 
         personagens.sort();
         personagens.mostrar();
+        long fim = System.currentTimeMillis();
+        long tempo = fim - inicio;
+        String conteudo = "matricula 1321401 \t número de comparações " + Lista.comp
+                + "\t número de movimetações " + Lista.mov + "\t Tempo de execução " + tempo
+                + " milisegundos";
+        Arq.openWriteClose("matricula_quicksort2.txt", "UTF-8", conteudo);
     }
 
     public static String getFileData(String word) {
@@ -24,7 +31,7 @@ public class TP03Q04 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word.substring(0));
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -80,6 +87,8 @@ class Celula {
 class Lista {
     private Celula primeiro;
     private Celula ultimo;
+    public static int mov = 0;
+    public static int comp = 0;
 
     /**
      * Construtor da classe que cria uma lista dupla sem elementos (somente no
@@ -94,76 +103,80 @@ class Lista {
         quicksort(primeiro.prox, ultimo, 0, tamanho() - 1);
     }
 
-    public boolean comparePersonagem(Personagem p1, Personagem p2) {
-        int compareCor = p1.getCorDoCabelo().compareTo(p2.getCorDoCabelo());
-        boolean nomeMenor = p1.getNome().compareTo(p2.getNome()) < 0;
-    
-        if (compareCor == 0) {
-            return nomeMenor;
+    public boolean compareMenor(Personagem p1, Personagem p2) {
+        if (p1.getCorDoCabelo().charAt(0) < p2.getCorDoCabelo().charAt(0) ||
+                (p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0)
+                        && p1.getCorDoCabelo().charAt(1) < p2.getCorDoCabelo().charAt(1))
+                ||
+                (p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0)
+                        && p1.getCorDoCabelo().charAt(1) == p2.getCorDoCabelo().charAt(1)
+                        && p1.getCorDoCabelo().charAt(2) < p2.getCorDoCabelo().charAt(2))
+                || (p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0)
+                        && p1.getCorDoCabelo().charAt(1) == p2.getCorDoCabelo().charAt(1)
+                        && p1.getCorDoCabelo().charAt(2) == p2.getCorDoCabelo().charAt(2) &&
+                        p1.getNome().compareTo(p2.getNome()) < 0)) {
+            return true;
         }
-        return compareCor < 0;
+        return false;
     }
 
-    public void quicksort(Celula esq, Celula dir, int e, int d) {
-        int esqd = e, dirt = d;
-        Celula i = esq, j = dir;
-        Personagem pivo = esq.elemento.clone();
-        while (esqd < dirt) {
-            while (comparePersonagem(i.elemento, pivo)) {
-                esqd++;
-                i = i.prox;
-                if (i.elemento == null) {
-                    i.elemento = pesquisar(esqd);
-                }
+    public boolean compareMaior(Personagem p1, Personagem p2) {
+        if (p1.getCorDoCabelo().charAt(0) > p2.getCorDoCabelo().charAt(0) ||
+                (p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0)
+                        && p1.getCorDoCabelo().charAt(1) > p2.getCorDoCabelo().charAt(1))
+                ||
+                (p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0)
+                        && p1.getCorDoCabelo().charAt(1) == p2.getCorDoCabelo().charAt(1)
+                        && p1.getCorDoCabelo().charAt(2) > p2.getCorDoCabelo().charAt(2))
+                || (p1.getCorDoCabelo().charAt(0) == p2.getCorDoCabelo().charAt(0)
+                        && p1.getCorDoCabelo().charAt(1) == p2.getCorDoCabelo().charAt(1)
+                        && p1.getCorDoCabelo().charAt(2) == p2.getCorDoCabelo().charAt(2) &&
+                        p1.getNome().compareTo(p2.getNome()) > 0)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void quicksort(Celula inicio, Celula fim, int esq, int dir) {
+        Celula in = inicio;
+        Celula fi = fim;
+        int i = esq, j = dir;
+        Personagem pivo = fim.elemento;
+        while (i <= j) {
+            comp++;
+            while (compareMenor(in.elemento, pivo)) {
+                comp++;
+                in = in.prox;
+                i++;
             }
-            while (comparePersonagem(pivo, j.elemento)) {
-                dirt--;
-                j = j.ant;
-                if (j.elemento == null) {
-                    j.elemento = pesquisar(dirt);
-                }
+            while (compareMaior(fi.elemento, pivo)) {
+                comp++;
+                fi = fi.ant;
+                j--;
             }
-            if (esqd <= dirt && i.elemento != null && j.elemento != null) {
-                swap(i, j);
-                esqd++;
-                if (i.prox != null && i.prox.elemento != null) {
-                    i = i.prox;
-                }
-                dirt--;
-                if (j.ant != null && j.ant.elemento != null) {
-                    j = j.ant;
-                }
+            if (i <= j) {
+                comp++;
+                Personagem tmp = in.elemento.clone();
+                in.elemento = fi.elemento.clone();
+                fi.elemento = tmp.clone();
+                in = in.prox;
+                fi = fi.ant;
+                i++;
+                j--;
+                mov++;
             }
         }
-        if (e < dirt)
-            quicksort(i, dir, e, dirt);
-        if (esqd < d)
-            quicksort(esq, j, esqd, d);
+        comp += 2;
+        if (esq < j)
+            quicksort(inicio, fi, esq, j);
+        if (i < dir)
+            quicksort(in, fim, i, dir);
     }
 
     public void swap(Celula i, Celula j) {
         Personagem tmp = i.elemento.clone();
         i.elemento = j.elemento.clone();
         j.elemento = tmp.clone();
-    }
-
-    /**
-     * Insere um elemento na primeira posicao da lista.
-     * 
-     * @param x int elemento a ser inserido.
-     */
-    public void inserirInicio(Personagem x) {
-        Celula tmp = new Celula(x);
-
-        tmp.ant = primeiro;
-        tmp.prox = primeiro.prox;
-        primeiro.prox = tmp;
-        if (primeiro == ultimo) {
-            ultimo = tmp;
-        } else {
-            tmp.prox.ant = tmp;
-        }
-        tmp = null;
     }
 
     /**
@@ -175,111 +188,6 @@ class Lista {
         ultimo.prox = new Celula(x);
         ultimo.prox.ant = ultimo;
         ultimo = ultimo.prox;
-    }
-
-    /**
-     * Remove um elemento da primeira posicao da lista.
-     * 
-     * @return resp int elemento a ser removido.
-     * @throws Exception Se a lista nao contiver elementos.
-     */
-    public Personagem removerInicio() throws Exception {
-        if (primeiro == ultimo) {
-            throw new Exception("Erro ao remover (vazia)!");
-        }
-
-        Celula tmp = primeiro;
-        primeiro = primeiro.prox;
-        Personagem resp = primeiro.elemento;
-        tmp.prox = primeiro.ant = null;
-        tmp = null;
-        return resp;
-    }
-
-    /**
-     * Remove um elemento da ultima posicao da lista.
-     * 
-     * @return resp int elemento a ser removido.
-     * @throws Exception Se a lista nao contiver elementos.
-     */
-    public Personagem removerFim() throws Exception {
-        if (primeiro == ultimo) {
-            throw new Exception("Erro ao remover (vazia)!");
-        }
-        Personagem resp = ultimo.elemento;
-        ultimo = ultimo.ant;
-        ultimo.prox.ant = null;
-        ultimo.prox = null;
-        return resp;
-    }
-
-    /**
-     * Insere um elemento em uma posicao especifica considerando que o
-     * primeiro elemento valido esta na posicao 0.
-     * 
-     * @param x   int elemento a ser inserido.
-     * @param pos int posicao da insercao.
-     * @throws Exception Se <code>posicao</code> invalida.
-     */
-    public void inserir(Personagem x, int pos) throws Exception {
-
-        int tamanho = tamanho();
-
-        if (pos < 0 || pos > tamanho) {
-            throw new Exception("Erro ao inserir posicao (" + pos + " / tamanho = " + tamanho + ") invalida!");
-        } else if (pos == 0) {
-            inserirInicio(x);
-        } else if (pos == tamanho) {
-            inserirFim(x);
-        } else {
-            // Caminhar ate a posicao anterior a insercao
-            Celula i = primeiro;
-            for (int j = 0; j < pos; j++, i = i.prox)
-                ;
-
-            Celula tmp = new Celula(x);
-            tmp.ant = i;
-            tmp.prox = i.prox;
-            tmp.ant.prox = tmp.prox.ant = tmp;
-            tmp = i = null;
-        }
-    }
-
-    /**
-     * Remove um elemento de uma posicao especifica da lista
-     * considerando que o primeiro elemento valido esta na posicao 0.
-     * 
-     * @param posicao Meio da remocao.
-     * @return resp int elemento a ser removido.
-     * @throws Exception Se <code>posicao</code> invalida.
-     */
-    public Personagem remover(int pos) throws Exception {
-        Personagem resp;
-        int tamanho = tamanho();
-
-        if (primeiro == ultimo) {
-            throw new Exception("Erro ao remover (vazia)!");
-
-        } else if (pos < 0 || pos >= tamanho) {
-            throw new Exception("Erro ao remover (posicao " + pos + " / " + tamanho + " invalida!");
-        } else if (pos == 0) {
-            resp = removerInicio();
-        } else if (pos == tamanho - 1) {
-            resp = removerFim();
-        } else {
-            // Caminhar ate a posicao anterior a insercao
-            Celula i = primeiro.prox;
-            for (int j = 0; j < pos; j++, i = i.prox)
-                ;
-
-            i.ant.prox = i.prox;
-            i.prox.ant = i.ant;
-            resp = i.elemento;
-            i.prox = i.ant = null;
-            i = null;
-        }
-
-        return resp;
     }
 
     /**

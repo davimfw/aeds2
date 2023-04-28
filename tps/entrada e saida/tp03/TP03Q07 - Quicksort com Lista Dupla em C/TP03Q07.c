@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 // ==================================== Definitions ================================== //
 
@@ -370,6 +371,8 @@ void inserir(const SWCharacter *const x)
     ultimo->prox->ant = ultimo;
     ultimo = ultimo->prox;
 }
+int comp = 0;
+int mov = 0;
 
 bool compareMenor(SWCharacter *p1, SWCharacter *p2)
 {
@@ -403,18 +406,22 @@ void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
     SWCharacter *pivo = (*fim)->elemento;
     while (i <= j)
     {
+        comp++;
         while (compareMenor(in->elemento, pivo))
         {
+            comp++;
             in = in->prox;
             i++;
         }
         while (compareMaior(fi->elemento, pivo))
         {
+            comp++;
             fi = fi->ant;
             j--;
         }
         if (i <= j)
         {
+            comp++;
             SWCharacter *tmp = swc_clone(in->elemento);
             in->elemento = swc_clone(fi->elemento);
             fi->elemento = tmp;
@@ -422,8 +429,10 @@ void quicksortRec(Celula **inicio, Celula **fim, int esq, int dir)
             fi = fi->ant;
             i++;
             j--;
+            mov++;
         }
     }
+    comp+=2;
     if (esq < j)
         quicksortRec(inicio, &fi, esq, j);
     if (i < dir)
@@ -439,6 +448,9 @@ void quicksort(Celula **inicio, Celula **fim, int n)
 
 int main()
 {
+    clock_t inicio, fim;
+    double tempo;
+    inicio = clock();
     start();
     char *str = (char *)malloc(100 * sizeof(char));
     scanf(" %100[^\n]", str);
@@ -455,8 +467,19 @@ int main()
     {
         swc_print(tmp->elemento);
     }
-    // @TODO print file
-    // swc_free(array, len);
-    // free(str);
+
+    fim = clock();
+    tempo = (double)(fim - inicio) / CLOCKS_PER_SEC;
+
+    FILE *arquivo;
+    arquivo = fopen("matricula_quicksort2.txt", "w");
+    if (arquivo == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return 1;
+    }
+
+    fprintf(arquivo, "matricula: 1321401 \t comparações: %d \t movimentações: %d \t tempo: %f", comp, mov, tempo);
+
+    fclose(arquivo);
     return 0;
 }
