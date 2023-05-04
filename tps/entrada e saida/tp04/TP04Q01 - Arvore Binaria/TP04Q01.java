@@ -1,10 +1,71 @@
-public class TP04Q01 {
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Locale;
 
+public class TP04Q01 {
+    public static void main(String[] args) throws Exception {
+        long inicio = System.currentTimeMillis();
+        Locale.setDefault(Locale.US);
+        MyIO.setCharset("UTF-8");
+        String word = MyIO.readLine();
+        ArvoreBinaria personagens = new ArvoreBinaria();
+        do {
+            personagens.inserir(new Personagem(getFileData(word)));
+            word = MyIO.readLine();
+        } while (!isFim(word));
+
+        word = MyIO.readLine();
+        do {
+            System.out.println(personagens.pesquisar(word) ? " SIM" : " NÃO");
+            word = MyIO.readLine();
+        } while (!isFim(word));
+        long fim = System.currentTimeMillis();
+        long tempo = fim - inicio;
+        String conteudo = "matricula 1321401 \t número de comparações " + personagens.comp
+                + "\t Tempo de execução " + tempo
+                + " milisegundos";
+        Arq.openWriteClose("matricula_arvoreBinaria.txt", "UTF-8", conteudo);
+    }
+    
+    public static String getFileData(String word) {
+        BufferedReader br = null;
+        FileReader fr = null;
+        String fileData = "";
+        try {
+            fr = new FileReader(word.substring(0));
+            br = new BufferedReader(fr);
+
+            // Ler cada linha do arquivo
+            fileData = br.readLine();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Fechar o BufferedReader e FileReader
+            try {
+                if (br != null) {
+                    br.close();
+                }
+                if (fr != null) {
+                    fr.close();
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return fileData;
+    }
+
+    public static boolean isFim(String word) {
+        return word.length() == 3 && word.charAt(0) == 'F' && word.charAt(1) == 'I' && word.charAt(2) == 'M';
+    }
 }
 
-public class ArvoreBinaria {
+class ArvoreBinaria {
     private No raiz; // Raiz da arvore.
-
+    public int comp = 0;
     /**
      * Construtor da classe.
      */
@@ -19,7 +80,8 @@ public class ArvoreBinaria {
      * @return <code>true</code> se o elemento existir,
      *         <code>false</code> em caso contrario.
      */
-    public boolean pesquisar(int x) {
+    public boolean pesquisar(String x) {
+        System.out.print(x + " raiz");
         return pesquisar(x, raiz);
     }
 
@@ -31,19 +93,22 @@ public class ArvoreBinaria {
      * @return <code>true</code> se o elemento existir,
      *         <code>false</code> em caso contrario.
      */
-    private boolean pesquisar(int x, No i) {
+    private boolean pesquisar(String x, No i) {
         boolean resp;
         if (i == null) {
             resp = false;
-
-        } else if (x == i.elemento) {
+            comp++;
+        } else if (x.equals(i.elemento.getNome())) {
             resp = true;
-
-        } else if (x < i.elemento) {
+            comp++;
+        } else if (x.compareTo(i.elemento.getNome()) < 0) {
+            System.out.print(" esq");
             resp = pesquisar(x, i.esq);
-
+            comp++;
         } else {
+            System.out.print(" dir");
             resp = pesquisar(x, i.dir);
+            comp++;
         }
         return resp;
     }
@@ -64,6 +129,7 @@ public class ArvoreBinaria {
      */
     private void caminharCentral(No i) {
         if (i != null) {
+            comp++;
             caminharCentral(i.esq); // Elementos da esquerda.
             System.out.print(i.elemento + " "); // Conteudo do no.
             caminharCentral(i.dir); // Elementos da direita.
@@ -86,6 +152,7 @@ public class ArvoreBinaria {
      */
     private void caminharPre(No i) {
         if (i != null) {
+            comp++;
             System.out.print(i.elemento + " "); // Conteudo do no.
             caminharPre(i.esq); // Elementos da esquerda.
             caminharPre(i.dir); // Elementos da direita.
@@ -108,6 +175,7 @@ public class ArvoreBinaria {
      */
     private void caminharPos(No i) {
         if (i != null) {
+            comp++;
             caminharPos(i.esq); // Elementos da esquerda.
             caminharPos(i.dir); // Elementos da direita.
             System.out.print(i.elemento + " "); // Conteudo do no.
@@ -120,7 +188,7 @@ public class ArvoreBinaria {
      * @param x Elemento a ser inserido.
      * @throws Exception Se o elemento existir.
      */
-    public void inserir(int x) throws Exception {
+    public void inserir(Personagem x) throws Exception {
         raiz = inserir(x, raiz);
     }
 
@@ -132,16 +200,16 @@ public class ArvoreBinaria {
      * @return No em analise, alterado ou nao.
      * @throws Exception Se o elemento existir.
      */
-    private No inserir(int x, No i) throws Exception {
+    private No inserir(Personagem x, No i) throws Exception {
         if (i == null) {
             i = new No(x);
-
-        } else if (x < i.elemento) {
+            comp++;
+        } else if (x.getNome().compareTo(i.elemento.getNome()) < 0) {
             i.esq = inserir(x, i.esq);
-
-        } else if (x > i.elemento) {
+            comp++;
+        } else if (x.getNome().compareTo(i.elemento.getNome()) > 0) {
             i.dir = inserir(x, i.dir);
-
+            comp++;
         } else {
             throw new Exception("Erro ao inserir!");
         }
@@ -155,13 +223,16 @@ public class ArvoreBinaria {
      * @param x Elemento a ser inserido.
      * @throws Exception Se o elemento existir.
      */
-    public void inserirPai(int x) throws Exception {
+    public void inserirPai(Personagem x) throws Exception {
         if (raiz == null) {
             raiz = new No(x);
-        } else if (x < raiz.elemento) {
+            comp++;
+        } else if (x.getNome().compareTo(raiz.elemento.getNome()) < 0) {
             inserirPai(x, raiz.esq, raiz);
-        } else if (x > raiz.elemento) {
+            comp++;
+        } else if (x.getNome().compareTo(raiz.elemento.getNome()) > 0) {
             inserirPai(x, raiz.dir, raiz);
+            comp++;
         } else {
             throw new Exception("Erro ao inserirPai!");
         }
@@ -175,123 +246,25 @@ public class ArvoreBinaria {
      * @param pai No superior ao em analise.
      * @throws Exception Se o elemento existir.
      */
-    private void inserirPai(int x, No i, No pai) throws Exception {
+    private void inserirPai(Personagem x, No i, No pai) throws Exception {
         if (i == null) {
-            if (x < pai.elemento) {
+            comp++;
+            if (x.getNome().compareTo(pai.elemento.getNome()) < 0) {
                 pai.esq = new No(x);
+                comp++;
             } else {
                 pai.dir = new No(x);
+                comp++;
             }
-        } else if (x < i.elemento) {
+        } else if (x.getNome().compareTo(pai.elemento.getNome()) < 0) {
             inserirPai(x, i.esq, i);
-        } else if (x > i.elemento) {
+            comp++;
+        } else if (x.getNome().compareTo(pai.elemento.getNome()) > 0) {
             inserirPai(x, i.dir, i);
+            comp++;
         } else {
             throw new Exception("Erro ao inserirPai!");
         }
-    }
-
-    /**
-     * Metodo publico iterativo para remover elemento.
-     * 
-     * @param x Elemento a ser removido.
-     * @throws Exception Se nao encontrar elemento.
-     */
-    public void remover(int x) throws Exception {
-        raiz = remover(x, raiz);
-    }
-
-    /**
-     * Metodo privado recursivo para remover elemento.
-     * 
-     * @param x Elemento a ser removido.
-     * @param i No em analise.
-     * @return No em analise, alterado ou nao.
-     * @throws Exception Se nao encontrar elemento.
-     */
-    private No remover(int x, No i) throws Exception {
-
-        if (i == null) {
-            throw new Exception("Erro ao remover!");
-
-        } else if (x < i.elemento) {
-            i.esq = remover(x, i.esq);
-
-        } else if (x > i.elemento) {
-            i.dir = remover(x, i.dir);
-
-            // Sem no a direita.
-        } else if (i.dir == null) {
-            i = i.esq;
-
-            // Sem no a esquerda.
-        } else if (i.esq == null) {
-            i = i.dir;
-
-            // No a esquerda e no a direita.
-        } else {
-            i.esq = maiorEsq(i, i.esq);
-        }
-
-        return i;
-    }
-
-    /**
-     * Metodo para trocar o elemento "removido" pelo maior da esquerda.
-     * 
-     * @param i No que teve o elemento removido.
-     * @param j No da subarvore esquerda.
-     * @return No em analise, alterado ou nao.
-     */
-    private No maiorEsq(No i, No j) {
-
-        // Encontrou o maximo da subarvore esquerda.
-        if (j.dir == null) {
-            i.elemento = j.elemento; // Substitui i por j.
-            j = j.esq; // Substitui j por j.ESQ.
-
-            // Existe no a direita.
-        } else {
-            // Caminha para direita.
-            j.dir = maiorEsq(i, j.dir);
-        }
-        return j;
-    }
-
-    /**
-     * Metodo que retorna o maior elemento da árvore
-     * 
-     * @return int maior elemento da árvore
-     */
-    public int getMaior() {
-        int resp = -1;
-
-        if (raiz != null) {
-            No i;
-            for (i = raiz; i.dir != null; i = i.dir)
-                ;
-            resp = i.elemento;
-        }
-
-        return resp;
-    }
-
-    /**
-     * Metodo que retorna o menor elemento da árvore
-     * 
-     * @return int menor elemento da árvore
-     */
-    public int getMenor() {
-        int resp = -1;
-
-        if (raiz != null) {
-            No i;
-            for (i = raiz; i.esq != null; i = i.esq)
-                ;
-            resp = i.elemento;
-        }
-
-        return resp;
     }
 
     /**
@@ -311,119 +284,19 @@ public class ArvoreBinaria {
     public int getAltura(No i, int altura) {
         if (i == null) {
             altura--;
+            comp++;
         } else {
             int alturaEsq = getAltura(i.esq, altura + 1);
             int alturaDir = getAltura(i.dir, altura + 1);
             altura = (alturaEsq > alturaDir) ? alturaEsq : alturaDir;
+            comp++;
         }
         return altura;
-    }
-
-    /**
-     * Metodo publico iterativo para remover elemento.
-     * 
-     * @param x Elemento a ser removido.
-     * @throws Exception Se nao encontrar elemento.
-     */
-    public void remover2(int x) throws Exception {
-        if (raiz == null) {
-            throw new Exception("Erro ao remover2!");
-        } else if (x < raiz.elemento) {
-            remover2(x, raiz.esq, raiz);
-        } else if (x > raiz.elemento) {
-            remover2(x, raiz.dir, raiz);
-        } else if (raiz.dir == null) {
-            raiz = raiz.esq;
-        } else if (raiz.esq == null) {
-            raiz = raiz.dir;
-        } else {
-            raiz.esq = maiorEsq(raiz, raiz.esq);
-        }
-    }
-
-    /**
-     * Metodo privado recursivo para remover elemento.
-     * 
-     * @param x   Elemento a ser removido.
-     * @param i   No em analise.
-     * @param pai do No em analise.
-     * @throws Exception Se nao encontrar elemento.
-     */
-    private void remover2(int x, No i, No pai) throws Exception {
-        if (i == null) {
-            throw new Exception("Erro ao remover2!");
-        } else if (x < i.elemento) {
-            remover2(x, i.esq, i);
-        } else if (x > i.elemento) {
-            remover2(x, i.dir, i);
-        } else if (i.dir == null) {
-            pai = i.esq;
-        } else if (i.esq == null) {
-            pai = i.dir;
-        } else {
-            i.esq = maiorEsq(i, i.esq);
-        }
-    }
-
-    public int getRaiz() throws Exception {
-        return raiz.elemento;
-    }
-
-    public static boolean igual(ArvoreBinaria a1, ArvoreBinaria a2) {
-        return igual(a1.raiz, a2.raiz);
-    }
-
-    private static boolean igual(No i1, No i2) {
-        boolean resp;
-        if (i1 != null && i2 != null) {
-            resp = (i1.elemento == i2.elemento) && igual(i1.esq, i2.esq) && igual(i1.dir, i2.dir);
-        } else if (i1 == null && i2 == null) {
-            resp = true;
-        } else {
-            resp = false;
-        }
-        return resp;
-    }
-
-    public int soma() {
-        return soma(raiz);
-    }
-
-    public int soma(No i) {
-        int resp = 0;
-        if (i != null) {
-            resp = i.elemento + soma(i.esq) + soma(i.dir);
-        }
-        return resp;
-    }
-
-    public int quantidadePares() {
-        return quantidadePares(raiz);
-    }
-
-    public int quantidadePares(No i) {
-        int resp = 0;
-        if (i != null) {
-            resp = ((i.elemento % 2 == 0) ? 1 : 0) + quantidadePares(i.esq) + quantidadePares(i.dir);
-        }
-        return resp;
-    }
-
-    public boolean hasDiv11() {
-        return hasDiv11(raiz);
-    }
-
-    public boolean hasDiv11(No i) {
-        boolean resp = false;
-        if (i != null) {
-            resp = (i.elemento % 11 == 0) || hasDiv11(i.esq) || hasDiv11(i.dir);
-        }
-        return resp;
     }
 }
 
 class No {
-    public int elemento; // Conteudo do no.
+    public Personagem elemento; // Conteudo do no.
     public No esq, dir; // Filhos da esq e dir.
 
     /**
@@ -431,7 +304,7 @@ class No {
      * 
      * @param elemento Conteudo do no.
      */
-    public No(int elemento) {
+    public No(Personagem elemento) {
         this(elemento, null, null);
     }
 
@@ -442,7 +315,7 @@ class No {
      * @param esq      No da esquerda.
      * @param dir      No da direita.
      */
-    public No(int elemento, No esq, No dir) {
+    public No(Personagem elemento, No esq, No dir) {
         this.elemento = elemento;
         this.esq = esq;
         this.dir = dir;
