@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
-public class TP04Q03 {
+public class TP04Q02 {
     public static void main(String[] args) throws Exception {
         long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
-        ArvoreBinaria personagens = new ArvoreBinaria();
+        ArvoreArvore personagens = new ArvoreArvore();
         do {
             personagens.inserir(new Personagem(getFileData(word)));
             word = MyIO.readLine();
@@ -26,7 +26,7 @@ public class TP04Q03 {
         String conteudo = "matricula 1321401 \t número de comparações " + personagens.comp
                 + "\t Tempo de execução " + tempo
                 + " milisegundos";
-        Arq.openWriteClose("matricula_avl.txt", "UTF-8", conteudo);
+        Arq.openWriteClose("matricula_arvoreArvore.txt", "UTF-8", conteudo);
     }
 
     public static String getFileData(String word) {
@@ -34,7 +34,7 @@ public class TP04Q03 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(0));
+            fr = new FileReader(word.substring(1));
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -63,147 +63,73 @@ public class TP04Q03 {
     }
 }
 
-class ArvoreBinaria {
+class ArvoreArvore {
     private No raiz; // Raiz da arvore.
     public int comp = 0;
 
     /**
      * Construtor da classe.
      */
-    public ArvoreBinaria() {
+    public ArvoreArvore() {
         raiz = null;
+        // 7, 3, 11, 1, 5, 9, 12, 0, 2, 4, 6, 8, 10, 13 e 14
+        inserir(7);
+        inserir(3);
+        inserir(11);
+        inserir(1);
+        inserir(5);
+        inserir(9);
+        inserir(12);
+        inserir(0);
+        inserir(2);
+        inserir(4);
+        inserir(6);
+        inserir(8);
+        inserir(10);
+        inserir(13);
+        inserir(14);
     }
 
-    /**
-     * Metodo publico iterativo para pesquisar elemento.
-     * 
-     * @param x Elemento que sera procurado.
-     * @return <code>true</code> se o elemento existir,
-     *         <code>false</code> em caso contrario.
-     */
-    public boolean pesquisar(String x) {
-        System.out.print(x + " raiz");
-        return pesquisar(x, raiz);
-    }
-
-    /**
-     * Metodo privado recursivo para pesquisar elemento.
-     * 
-     * @param x Elemento que sera procurado.
-     * @param i No em analise.
-     * @return <code>true</code> se o elemento existir,
-     *         <code>false</code> em caso contrario.
-     */
-    private boolean pesquisar(String x, No i) {
-        boolean resp;
-        if (i == null) {
-            resp = false;
-            comp++;
-        } else if (x.equals(i.elemento.getNome())) {
-            resp = true;
-            comp++;
-        } else if (x.compareTo(i.elemento.getNome()) < 0) {
-            System.out.print(" esq");
-            resp = pesquisar(x, i.esq);
-            comp++;
-        } else {
-            System.out.print(" dir");
-            resp = pesquisar(x, i.dir);
-            comp++;
-        }
-        return resp;
-    }
-
-    /**
-     * Metodo publico iterativo para exibir elementos.
-     */
-    public void caminharCentral() {
-        System.out.print("[ ");
-        caminharCentral(raiz);
-        System.out.println("]");
-    }
-
-    /**
-     * Metodo privado recursivo para exibir elementos.
-     * 
-     * @param i No em analise.
-     */
-    private void caminharCentral(No i) {
-        if (i != null) {
-            comp++;
-            caminharCentral(i.esq); // Elementos da esquerda.
-            System.out.print(i.elemento + " "); // Conteudo do no.
-            caminharCentral(i.dir); // Elementos da direita.
-        }
-    }
-
-    /**
-     * Metodo publico iterativo para exibir elementos.
-     */
-    public void caminharPre() {
-        System.out.print("[ ");
-        caminharPre(raiz);
-        System.out.println("]");
-    }
-
-    /**
-     * Metodo privado recursivo para exibir elementos.
-     * 
-     * @param i No em analise.
-     */
-    private void caminharPre(No i) {
-        if (i != null) {
-            comp++;
-            System.out.print(i.elemento + " "); // Conteudo do no.
-            caminharPre(i.esq); // Elementos da esquerda.
-            caminharPre(i.dir); // Elementos da direita.
-        }
-    }
-
-    /**
-     * Metodo publico iterativo para exibir elementos.
-     */
-    public void caminharPos() {
-        System.out.print("[ ");
-        caminharPos(raiz);
-        System.out.println("]");
-    }
-
-    /**
-     * Metodo privado recursivo para exibir elementos.
-     * 
-     * @param i No em analise.
-     */
-    private void caminharPos(No i) {
-        if (i != null) {
-            comp++;
-            caminharPos(i.esq); // Elementos da esquerda.
-            caminharPos(i.dir); // Elementos da direita.
-            System.out.print(i.elemento + " "); // Conteudo do no.
-        }
-    }
-
-    /**
-     * Metodo publico iterativo para inserir elemento.
-     * 
-     * @param x Elemento a ser inserido.
-     * @throws Exception Se o elemento existir.
-     */
-    public void inserir(Personagem x) throws Exception {
+    public void inserir(int x) {
         raiz = inserir(x, raiz);
     }
 
-    /**
-     * Metodo privado recursivo para inserir elemento.
-     * 
-     * @param x Elemento a ser inserido.
-     * @param i No em analise.
-     * @return No em analise, alterado ou nao.
-     * @throws Exception Se o elemento existir.
-     */
-    private No inserir(Personagem x, No i) throws Exception {
+    private No inserir(int x, No i) {
         if (i == null) {
             i = new No(x);
+            comp++;
+        } else if (x < i.elemento) {
+            i.esq = inserir(x, i.esq);
+            comp++;
+        } else if (x > i.elemento) {
+            i.dir = inserir(x, i.dir);
+            comp++;
+        }
+
+        return i;
+    }
+
+    public void inserir(Personagem x) {
+        inserir(x, raiz);
+    }
+
+    public void inserir(Personagem x, No i) {
+        if (i == null) {
+            comp++;
+        } else if (x.getAltura() % 15 < i.elemento) {
+            inserir(x, i.esq);
+            comp++;
+        } else if (x.getAltura() % 15 > i.elemento) {
+            inserir(x, i.dir);
+            comp++;
+        } else {
+            i.outro = inserir(x, i.outro);
+        }
+    }
+
+    private No2 inserir(Personagem x, No2 i) {
+        if (i == null) {
+            i = new No2(x);
             comp++;
         } else if (x.getNome().compareTo(i.elemento.getNome()) < 0) {
             i.esq = inserir(x, i.esq);
@@ -211,111 +137,84 @@ class ArvoreBinaria {
         } else if (x.getNome().compareTo(i.elemento.getNome()) > 0) {
             i.dir = inserir(x, i.dir);
             comp++;
-        } else {
-            throw new Exception("Erro ao inserir!");
         }
-        return balancear(i);
+
+        return i;
     }
 
-    private No balancear(No no) throws Exception {
-        if (no != null) {
-            int fator = No.getNivel(no.dir) - No.getNivel(no.esq);
-            // Se balanceada
-            if (Math.abs(fator) <= 1) {
+    /**
+     * Metodo publico iterativo para pesquisar elemento.
+     * 
+     * @param elemento Elemento que sera procurado.
+     * @return <code>true</code> se o elemento existir,
+     *         <code>false</code> em caso contrario.
+     */
+    public boolean pesquisar(String nome) {
+        System.out.print(nome + " raiz");
+        return pesquisar(raiz, nome);
+    }
+
+    private boolean pesquisar(No no, String x) {
+        boolean resp;
+        if (no == null) {
+            resp = false;
+            comp++;
+        } else {
+            resp = pesquisarSegundaArvore(no.outro, x);
+            if (resp == false) {
                 comp++;
-                no.setNivel();
-                // Se desbalanceada para a direita
-            } else if (fator == 2) {
                 comp++;
-                int fatorFilhoDir = No.getNivel(no.dir.dir) - No.getNivel(no.dir.esq);
-                // Se o filho a direita tambem estiver desbalanceado
-                if (fatorFilhoDir == -1) {
+                resp = pesquisar(no.esq, x);
+                System.out.print(" esq");
+
+                comp++;
+                if (resp == false) {
+                    resp = pesquisar(no.dir, x);
                     comp++;
-                    no.dir = rotacionarDir(no.dir);
+                    System.out.print(" dir");
                 }
-                no = rotacionarEsq(no);
-                // Se desbalanceada para a esquerda
-            } else if (fator == -2) {
-                comp++;
-                int fatorFilhoEsq = No.getNivel(no.esq.dir) - No.getNivel(no.esq.esq);
-                // Se o filho a esquerda tambem estiver desbalanceado
-                if (fatorFilhoEsq == 1) {
-                    no.esq = rotacionarEsq(no.esq);
-                    comp++;
-                }
-                no = rotacionarDir(no);
-            } else {
-                throw new Exception(
-                        "Erro no No(" + no.elemento + ") com fator de balanceamento (" + fator + ") invalido!");
+
             }
         }
-        return no;
+        return resp;
     }
 
-    private No rotacionarDir(No no) {
-		No noEsq = no.esq;
-		No noEsqDir = noEsq.dir;
-
-		noEsq.dir = no;
-		no.esq = noEsqDir;
-		no.setNivel(); // Atualizar o nivel do no
-		noEsq.setNivel(); // Atualizar o nivel do noEsq
-
-		return noEsq;
-	}
-
-	private No rotacionarEsq(No no) {
-		No noDir = no.dir;
-		No noDirEsq = noDir.esq;
-
-		noDir.esq = no;
-		no.dir = noDirEsq;
-
-		no.setNivel(); // Atualizar o nivel do no
-		noDir.setNivel(); // Atualizar o nivel do noDir
-		return noDir;
-	}
-
-    /**
-     * Metodo que retorna a altura da árvore
-     * 
-     * @return int altura da árvore
-     */
-    public int getAltura() {
-        return getAltura(raiz, 0);
-    }
-
-    /**
-     * Metodo que retorna a altura da árvore
-     * 
-     * @return int altura da árvore
-     */
-    public int getAltura(No i, int altura) {
-        if (i == null) {
-            altura--;
+    private boolean pesquisarSegundaArvore(No2 no, String x) {
+        boolean resp;
+        if (no == null) {
+            resp = false;
+            comp++;
+        } else if (x.compareTo(no.elemento.getNome()) < 0) {
+            resp = pesquisarSegundaArvore(no.esq, x);
+            System.out.print(" ESQ");
+            comp++;
+        } else if (x.compareTo(no.elemento.getNome()) > 0) {
+            resp = pesquisarSegundaArvore(no.dir, x);
+            System.out.print(" DIR");
             comp++;
         } else {
-            int alturaEsq = getAltura(i.esq, altura + 1);
-            int alturaDir = getAltura(i.dir, altura + 1);
-            altura = (alturaEsq > alturaDir) ? alturaEsq : alturaDir;
-            comp++;
+            resp = true;
         }
-        return altura;
+        return resp;
     }
+
 }
 
 class No {
-    public Personagem elemento; // Conteudo do no.
-    public No esq, dir; // Filhos da esq e dir.
-    public int nivel;
+    public int elemento; // Conteudo do no.
+    public No esq; // No da esquerda.
+    public No dir; // No da direita.
+    public No2 outro;
 
     /**
      * Construtor da classe.
      * 
      * @param elemento Conteudo do no.
      */
-    public No(Personagem elemento) {
-        this(elemento, null, null, 1);
+    No(int elemento) {
+        this.elemento = elemento;
+        this.esq = this.dir = null;
+        this.outro = null;
     }
 
     /**
@@ -325,27 +224,40 @@ class No {
      * @param esq      No da esquerda.
      * @param dir      No da direita.
      */
-    public No(Personagem elemento, No esq, No dir, int nivel) {
+    No(int elemento, No esq, No dir) {
         this.elemento = elemento;
         this.esq = esq;
         this.dir = dir;
-        this.nivel = nivel;
+        this.outro = null;
     }
+}
+
+class No2 {
+    public Personagem elemento; // Conteudo do no.
+    public No2 esq; // No da esquerda.
+    public No2 dir; // No da direita.
 
     /**
-     * Cálculo do número de níveis a partir de um vértice
-     */
-    public void setNivel() {
-        this.nivel = 1 + Math.max(getNivel(esq), getNivel(dir));
-    }
-
-    /**
-     * Retorna o número de níveis a partir de um vértice
+     * Construtor da classe.
      * 
-     * @param no nó que se deseja o nível.
+     * @param elemento Conteudo do no.
      */
-    public static int getNivel(No no) {
-        return (no == null) ? 0 : no.nivel;
+    No2(Personagem elemento) {
+        this.elemento = elemento;
+        this.esq = this.dir = null;
+    }
+
+    /**
+     * Construtor da classe.
+     * 
+     * @param elemento Conteudo do no.
+     * @param esq      No2 da esquerda.
+     * @param dir      No2 da direita.
+     */
+    No2(Personagem elemento, No2 esq, No2 dir) {
+        this.elemento = elemento;
+        this.esq = esq;
+        this.dir = dir;
     }
 }
 
