@@ -34,7 +34,7 @@ public class TP04Q02 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word.substring(0));
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -155,25 +155,24 @@ class ArvoreArvore {
     }
 
     private boolean pesquisar(No no, String x) {
-        boolean resp;
+        boolean resp = false;
         if (no == null) {
             resp = false;
             comp++;
         } else {
-            resp = pesquisarSegundaArvore(no.outro, x);
+            if (no.outro != null) {
+                comp++;
+                resp = pesquisarSegundaArvore(no.outro, x);
+            }
             if (resp == false) {
                 comp++;
-                comp++;
-                resp = pesquisar(no.esq, x);
                 System.out.print(" esq");
-
+                resp = pesquisar(no.esq, x);                
+            }
+            if (resp == false) {
+                System.out.print(" dir");
+                resp = pesquisar(no.dir, x);
                 comp++;
-                if (resp == false) {
-                    resp = pesquisar(no.dir, x);
-                    comp++;
-                    System.out.print(" dir");
-                }
-
             }
         }
         return resp;
@@ -182,20 +181,42 @@ class ArvoreArvore {
     private boolean pesquisarSegundaArvore(No2 no, String x) {
         boolean resp;
         if (no == null) {
+            // System.out.println(" é null");
             resp = false;
             comp++;
-        } else if (x.compareTo(no.elemento.getNome()) < 0) {
-            resp = pesquisarSegundaArvore(no.esq, x);
-            System.out.print(" ESQ");
-            comp++;
-        } else if (x.compareTo(no.elemento.getNome()) > 0) {
-            resp = pesquisarSegundaArvore(no.dir, x);
-            System.out.print(" DIR");
+        } else if (x.compareTo(no.elemento.getNome()) == 0) {
+            resp = true;
             comp++;
         } else {
-            resp = true;
+            System.out.print(" ESQ");
+            resp = pesquisarSegundaArvore(no.esq, x);
+            System.out.print(" DIR");
+            resp = pesquisarSegundaArvore(no.dir, x);
+            comp++;
         }
         return resp;
+    }
+
+    public void mostrar() {
+        mostrar(raiz);
+    }
+
+    public void mostrar(No i) {
+        if (i != null) {
+            System.out.println("Numero: " + i.elemento);
+            mostrar(i.esq);
+            System.out.println("Numero: " + i.elemento);
+            mostrar(i.outro);
+            mostrar(i.dir);
+        }
+    }
+
+    public void mostrar(No2 i) {
+        if (i != null) {
+            mostrar(i.esq);
+            i.elemento.imprimir();
+            mostrar(i.dir);
+        }
     }
 
 }

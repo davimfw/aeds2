@@ -1,1 +1,1 @@
-matricula 1321401 	 número de comparações 1692	 Tempo de execução 51 milisegundos
+matricula 1321401 	 nÃºmero de comparaÃ§Ãµes 2702	 Tempo de execuÃ§Ã£o 50 milisegundos
