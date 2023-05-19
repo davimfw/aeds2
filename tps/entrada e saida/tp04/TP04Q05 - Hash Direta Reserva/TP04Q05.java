@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
-public class TP04Q03 {
+public class TP04Q05 {
     public static void main(String[] args) throws Exception {
         long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
         String word = MyIO.readLine();
-        ArvoreBinaria personagens = new ArvoreBinaria();
+        Hash personagens = new Hash();
         do {
             personagens.inserir(new Personagem(getFileData(word)));
             word = MyIO.readLine();
@@ -34,7 +34,7 @@ public class TP04Q03 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(0));
+            fr = new FileReader(word.substring(1));
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo
@@ -63,10 +63,11 @@ public class TP04Q03 {
     }
 }
 
-public class Hash {
+class Hash {
     Personagem tabela[];
     int m1, m2, m, reserva;
     final Personagem NULO = null;
+    int comp = 0;
 
     public Hash() {
         this(21, 9);
@@ -90,11 +91,14 @@ public class Hash {
     public boolean inserir(Personagem elemento) {
         boolean resp = false;
         if (elemento != NULO) {
+            comp++;
             int pos = h(elemento);
             if (tabela[pos] == NULO) {
+                comp++;
                 tabela[pos] = elemento;
                 resp = true;
             } else if (reserva < m2) {
+                comp++;
                 tabela[m1 + reserva] = elemento;
                 reserva++;
                 resp = true;
@@ -104,16 +108,13 @@ public class Hash {
     }
 
     public boolean pesquisar(String elemento) {
+        System.out.print(elemento);
         boolean resp = false;
-        int pos = h(elemento);
-        if (tabela[pos].getNome().equals(elemento)) {
-            resp = true;
-        } else if (tabela[pos] != NULO) {
-            for (int i = 0; i < reserva; i++) {
-                if (tabela[m1 + i].getNome().equals(elemento)) {
-                    resp = true;
-                    i = reserva;
-                }
+        for (int i = 0; i < m; i++) {
+            if (tabela[i] != null && tabela[i].getNome().equals(elemento)) {
+                resp = true;
+                i = m;
+                comp++;
             }
         }
         return resp;
