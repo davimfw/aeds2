@@ -34,7 +34,7 @@ public class TP04Q06 {
         FileReader fr = null;
         String fileData = "";
         try {
-            fr = new FileReader(word.substring(1));
+            fr = new FileReader(word.substring(0));
             br = new BufferedReader(fr);
 
             // Ler cada linha do arquivo

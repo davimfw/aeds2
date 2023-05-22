@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
-public class TP04Q05 {
+public class TP04Q07 {
     public static void main(String[] args) throws Exception {
         long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
@@ -23,10 +23,10 @@ public class TP04Q05 {
         } while (!isFim(word));
         long fim = System.currentTimeMillis();
         long tempo = fim - inicio;
-        String conteudo = "matricula 1321401 \t número de comparações " + personagens.comp
+        String conteudo = "matricula 1321401 \t número de comparações " + personagens.getComp()
                 + "\t Tempo de execução " + tempo
                 + " milisegundos";
-        Arq.openWriteClose("matricula_hashReserva.txt", "UTF-8", conteudo);
+        Arq.openWriteClose("matricula_hashIndireta.txt", "UTF-8", conteudo);
     }
 
     public static String getFileData(String word) {
@@ -64,60 +64,90 @@ public class TP04Q05 {
 }
 
 class Hash {
-    Personagem tabela[];
-    int m1, m2, m, reserva;
+    Lista tabela[];
+    int tamanho;
     final Personagem NULO = null;
-    int comp = 0;
+
+    public int getComp() {
+        int comp = 0;
+        for (int i = 0; i < tamanho; i++) {
+            comp += tabela[i].comp;
+        }
+        return comp;
+    }
 
     public Hash() {
-        this(21, 9);
+        this(25);
     }
 
-    public Hash(int m1, int m2) {
-        this.m1 = m1;
-        this.m2 = m2;
-        this.m = m1 + m2;
-        this.tabela = new Personagem[this.m];
-        for (int i = 0; i < m1; i++) {
-            tabela[i] = NULO;
+    public Hash(int tamanho) {
+        this.tamanho = tamanho;
+        tabela = new Lista[tamanho];
+        for (int i = 0; i < tamanho; i++) {
+            tabela[i] = new Lista();
         }
-        reserva = 0;
     }
 
-    public int h(Personagem elemento) {
-        return elemento.getAltura() % m1;
+    public int h(int elemento) {
+        return elemento % tamanho;
     }
 
-    public boolean inserir(Personagem elemento) {
+    boolean pesquisar(String name) {
+        System.out.print(name);
         boolean resp = false;
-        if (elemento != NULO) {
+        for (int i = 0; i < tamanho && !resp; i++) {
+            resp = tabela[i].pesquisar(name);
+        }
+        return resp;
+    }
+
+    public void inserir(Personagem elemento) {
+        int pos = h(elemento.getAltura());
+        tabela[pos].inserir(elemento);
+    }
+}
+
+class Celula {
+    public Personagem elemento;
+    public Celula prox;
+
+    Celula(Personagem elemento) {
+        this.elemento = elemento;
+        this.prox = null;
+    }
+}
+
+class Lista {
+    private Celula primeiro;
+    private Celula ultimo;
+    public int comp = 0;
+
+    public Lista() {
+        primeiro = new Celula(null);
+        ultimo = primeiro;
+    }
+
+    public boolean pesquisar(String x) {
+        boolean retorno = false;
+        for (Celula i = primeiro.prox; i != null; i = i.prox) {
+            if (i.elemento.getNome().equals(x)) {
+                retorno = true;
+                i = ultimo;
+            }
             comp++;
-            int pos = h(elemento);
-            if (tabela[pos] == NULO) {
-                comp++;
-                tabela[pos] = elemento;
-                resp = true;
-            } else if (reserva < m2) {
-                comp++;
-                tabela[m1 + reserva] = elemento;
-                reserva++;
-                resp = true;
-            }
         }
-        return resp;
+        return retorno;
     }
 
-    public boolean pesquisar(String elemento) {
-        System.out.print(elemento);
-        boolean resp = false;
-        for (int i = 0; i < m; i++) {
-            if (tabela[i] != null && tabela[i].getNome().equals(elemento)) {
-                resp = true;
-                i = m;
-                comp++;
-            }
+    public void inserir(Personagem elemento) {
+        Celula tmp = new Celula(elemento);
+        tmp.prox = primeiro.prox;
+        primeiro.prox = tmp;
+        if (primeiro == ultimo) {
+            comp++;
+            ultimo = tmp;
         }
-        return resp;
+        tmp = null;
     }
 }
 
