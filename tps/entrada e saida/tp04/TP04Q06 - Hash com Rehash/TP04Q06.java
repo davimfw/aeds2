@@ -3,23 +3,28 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Scanner;
 
 public class TP04Q06 {
     public static void main(String[] args) throws Exception {
         long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
+        Scanner sc = new Scanner(System.in);
         MyIO.setCharset("UTF-8");
-        String word = MyIO.readLine();
+        String word = sc.nextLine();
         Hash personagens = new Hash();
         do {
             personagens.inserir(new Personagem(getFileData(word)));
-            word = MyIO.readLine();
+            word = sc.nextLine();
         } while (!isFim(word));
-
-        word = MyIO.readLine();
+        // mudar para ISO-8859-1 - scanner nao mudou nada
+        word = sc.nextLine();
         do {
-            System.out.println(personagens.pesquisar(word) ? " SIM" : " NÃO");
-            word = MyIO.readLine();
+            MyIO.setCharset("ISO-8859-1");
+            MyIO.print(word);
+            MyIO.println(personagens.pesquisar(word) ? " SIM" : " NÃO");
+            MyIO.setCharset("UTF-8");
+            word = sc.nextLine();
         } while (!isFim(word));
         long fim = System.currentTimeMillis();
         long tempo = fim - inicio;
@@ -86,9 +91,8 @@ class Hash {
     }
 
     public int reh(Personagem elemento) {
-        return (elemento.getAltura() + 1)% m;
-     }
-  
+        return (elemento.getAltura() + 1) % m;
+    }
 
     public boolean inserir(Personagem elemento) {
         boolean resp = false;
@@ -102,7 +106,7 @@ class Hash {
             } else {
                 comp++;
                 pos = reh(elemento);
-                if(tabela[pos] == NULO) {
+                if (tabela[pos] == NULO) {
                     comp++;
                     tabela[pos] = elemento;
                     resp = true;
@@ -113,7 +117,6 @@ class Hash {
     }
 
     public boolean pesquisar(String elemento) {
-        System.out.print(elemento);
         boolean resp = false;
         for (int i = 0; i < m; i++) {
             if (tabela[i] != null && tabela[i].getNome().equals(elemento)) {

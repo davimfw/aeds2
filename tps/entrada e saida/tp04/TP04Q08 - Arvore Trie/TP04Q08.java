@@ -3,32 +3,37 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Locale;
+import java.util.Scanner;
 
 public class TP04Q08 {
     public static void main(String[] args) throws Exception {
         long inicio = System.currentTimeMillis();
         Locale.setDefault(Locale.US);
         MyIO.setCharset("UTF-8");
-        String word = MyIO.readLine();
+        Scanner sc = new Scanner(System.in);
+        String word = sc.nextLine();
         ArvoreTrie a1 = new ArvoreTrie();
         ArvoreTrie a2 = new ArvoreTrie();
         do {
             a1.inserir(new Personagem(getFileData(word)).getNome());
-            word = MyIO.readLine();
+            word = sc.nextLine();
         } while (!isFim(word));
 
-        word = MyIO.readLine();
+        word = sc.nextLine();
         do {
             a2.inserir(new Personagem(getFileData(word)).getNome());
-            word = MyIO.readLine();
+            word = sc.nextLine();
         } while (!isFim(word));
 
         ArvoreTrie resp = merge(a1, a2);
 
-        word = MyIO.readLine();
+        word = sc.nextLine();
         do {
-            System.out.println(resp.pesquisar(word) ? " SIM" : " NÃO");
-            word = MyIO.readLine();
+            MyIO.setCharset("ISO-8859-1");
+            MyIO.print(word);
+            MyIO.println(resp.pesquisar(word) ? " SIM" : " NÃO");
+            MyIO.setCharset("UTF-8");
+            word = sc.nextLine();
         } while (!isFim(word));
         long fim = System.currentTimeMillis();
         long tempo = fim - inicio;
@@ -36,6 +41,7 @@ public class TP04Q08 {
                 + "\t Tempo de execução " + tempo
                 + " milisegundos";
         Arq.openWriteClose("matricula_arvoreTrie.txt", "UTF-8", conteudo);
+        sc.close();
     }
 
     public static ArvoreTrie merge(ArvoreTrie a1, ArvoreTrie a2) {
@@ -102,7 +108,6 @@ class ArvoreTrie {
     }
 
     public boolean pesquisar(String s) throws Exception {
-        System.out.print(s);
         return pesquisar(s, raiz, 0);
     }
 
